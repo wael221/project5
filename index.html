@@ -1,1 +1,57 @@
-<!-- placeholder -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Student List Filter</title>
+  <script src="https://cdn.jsdelivr.net/npm/handlebars@latest/dist/handlebars.js"></script>
+  <style>
+    body { font-family: Verdana, sans-serif; text-align: center; padding: 40px; }
+    h2 { color: #333; }
+    button { margin: 10px; padding: 12px 25px; font-size: 15px; background-color: #0055aa; color: white; border: none; border-radius: 5px; cursor: pointer; }
+    button:hover { background-color: #003e82; }
+    table { border-collapse: collapse; margin: 25px auto; width: 85%; }
+    th, td { border: 1px solid #666; padding: 10px; }
+    th { background-color: #f7f7f7; }
+  </style>
+</head>
+<body>
+
+  <h2>Browse Students by Major</h2>
+  <p>Choose a major below to see which students are enrolled:</p>
+  <button onclick="showMajor('CIT')">Show CIT</button>
+  <button onclick="showMajor('BUS')">Show Business</button>
+
+  <div id="outputArea"></div>
+
+  <script id="student-template" type="text/x-handlebars-template">
+    <table>
+      <tr><th>Full Name</th><th>Program</th><th>Midterm Grade</th><th>Final Grade</th></tr>
+      {{#each this}}
+        <tr>
+          <td>{{name}}</td>
+          <td>{{major}}</td>
+          <td>{{midterm}}</td>
+          <td>{{final}}</td>
+        </tr>
+      {{/each}}
+    </table>
+  </script>
+
+  <script>
+    let studentData = [];
+
+    fetch('cit5students.json')
+      .then(res => res.json())
+      .then(json => { studentData = json });
+
+    function showMajor(majorType) {
+      const selected = studentData.filter(entry => entry.major === majorType);
+      const templateSource = document.getElementById('student-template').innerHTML;
+      const template = Handlebars.compile(templateSource);
+      const filledHTML = template(selected);
+      document.getElementById('outputArea').innerHTML = filledHTML;
+    }
+  </script>
+
+</body>
+</html>
